@@ -3,31 +3,20 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import User from './components/User';
 import Home from './components/Home';
+import Welcome from './components/Welcome';
 
 const App = () => {
-  const [employee, setEmployee] = useState([]);
+  const [employee, setEmployee] = useState('');
 
   useEffect(() => {
     axios
-      .get('https://crudcrud.com/api/6d0beff0ffef46d8bf03e5dc42cfc53f/unicorns')
+      .get('https://crudcrud.com/api/6d0beff0ffef46d8bf03e5dc42cfc53f/jugs')
       .then((response) => {
-        setEmployee(response.data);
+        console.log('response', response.data);
+        const age = response.data[2].age;
+        setEmployee(age > 30 ? true : false);
       });
   }, []);
-
-  const data = { name: 'jagan', age: 28, colour: 'blue' };
-  const handleUpdate = () => {
-    alert('updated');
-    axios
-      .put(
-        'https://crudcrud.com/api/6d0beff0ffef46d8bf03e5dc42cfc53f/unicorns/63416e375e22f903e803e1a3',
-        { name: 'jagan', age: 30, colour: 'blue' }
-      )
-      .then((response) => {
-        alert('updated2');
-        console.log(response);
-      });
-  };
 
   console.log('employee', employee);
 
@@ -43,18 +32,33 @@ const App = () => {
               <Link to="/users">Users</Link>
             </li>
             <li>
-              <span onClick={handleUpdate}>Update</span>
+              <Link to="/welcome">Welcome</Link>
             </li>
           </ul>
         </nav>
-        <Switch>
-          <Route path="/users">
-            <User />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+        {employee === true && (
+          <Switch>
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+            <Route path="/">
+              <Welcome />
+            </Route>
+          </Switch>
+        )}
+        {employee === false && (
+          <Switch>
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+            <Route path="/users">
+              <User />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        )}
       </div>
     </Router>
   );
